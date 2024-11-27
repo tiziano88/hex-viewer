@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hex Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-6 text-gray-800">Hex Viewer</h1>
+
+      <!-- Input Section -->
+      <div class="mb-6">
+        <input
+          type="file"
+          id="fileInput"
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+        />
+      </div>
+
+      <!-- Hex Display -->
+      <div
+        id="hexDisplay"
+        class="font-mono text-sm bg-white p-4 rounded-lg shadow-sm border border-gray-200 overflow-x-auto"
+      >
+        <div class="flex text-gray-500 mb-2">
+          <div class="w-20">Offset</div>
+          <div class="flex-1">Hexadecimal</div>
+          <div class="w-32">ASCII</div>
+        </div>
+        <div id="hexContent" class="text-gray-700"></div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const buffer = e.target.result;
+            displayHexDump(buffer);
+          };
+          reader.readAsArrayBuffer(file);
+        });
+
+      function displayHexDump(buffer) {
+        const bytes = new Uint8Array(buffer);
+        const hexContent = document.getElementById("hexContent");
+        hexContent.innerHTML = "";
+
+        for (let i = 0; i < bytes.length; i += 16) {
+          const chunk = bytes.slice(i, i + 16);
+          const hexLine = document.createElement("div");
+          hexLine.className = "flex hover:bg-gray-50";
+
+          // Offset
+          const offset = document.createElement("div");
+          offset.className = "w-20 text-gray-500";
+          offset.textContent = i.toString(16).padStart(8, "0");
+
+          // Hex values
+          const hexValues = document.createElement("div");
+          hexValues.className = "flex-1";
+
+          // ASCII representation
+          const asciiValues = document.createElement("div");
+          asciiValues.className = "w-32";
+
+          let hexString = "";
+          let asciiString = "";
+
+          for (let j = 0; j < 16; j++) {
+            if (i + j < bytes.length) {
+              const byte = bytes[i + j];
+              hexString += byte.toString(16).padStart(2, "0") + " ";
+              asciiString +=
+                byte >= 32 && byte <= 126 ? String.fromCharCode(byte) : ".";
+            } else {
+              hexString += "   ";
+              asciiString += " ";
+            }
+          }
+
+          hexValues.textContent = hexString;
+          asciiValues.textContent = asciiString;
+
+          hexLine.appendChild(offset);
+          hexLine.appendChild(hexValues);
+          hexLine.appendChild(asciiValues);
+          hexContent.appendChild(hexLine);
+        }
+      }
+    </script>
+  </body>
+</html>
