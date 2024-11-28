@@ -5,18 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hex Viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.1/sha3.js"
+      integrity="sha512-cyEa/Adc/3/o5IR+1/Nzya2PFzJsm+1lM2fM1vUlI8C5ZObMer1Zyup3rS6sSxGGrzYsCrn1h5YwBHdgLxR2eA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://static.space/utils.js"></script>
+    <!-- <script src="http://localhost:8080/utils.js"></script> -->
   </head>
   <body class="bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-3xl font-bold mb-6 text-gray-800">Hex Viewer</h1>
 
       <!-- Input Section -->
-      <div class="mb-6">
+      <div class="mb-6 flex gap-2">
         <input
-          type="file"
-          id="fileInput"
-          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+          type="text"
+          id="digestInput"
+          placeholder="Enter sha3-512 digest..."
+          value="sha3-512:fd553cd5a796579656bb7668c17fc5eeadf843c0aa6d241d7ff5b5aa2a6fa6d3de61c932a5ce7a65466dbb41090bed1b6a9bb835129d6fe3125efeadd6d92f0c"
+          class="flex-1 px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        <button
+          id="loadButton"
+          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Load
+        </button>
       </div>
 
       <!-- Hex Display -->
@@ -34,18 +50,34 @@
     </div>
 
     <script>
-      document
-        .getElementById("fileInput")
-        .addEventListener("change", function (e) {
-          const file = e.target.files[0];
-          if (!file) return;
+      async function loadDigest() {
+        const digest = document.getElementById("digestInput").value;
+        if (!digest) return;
 
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            const buffer = e.target.result;
-            displayHexDump(buffer);
-          };
-          reader.readAsArrayBuffer(file);
+        try {
+          const objectDetails = await fetch_digest(
+            digest,
+            "https://static.space"
+          );
+          const data = await objectDetails.blob;
+          displayHexDump(await data.arrayBuffer());
+        } catch (error) {
+          console.error("Error fetching digest:", error);
+        }
+      }
+
+      // Handle button click
+      document
+        .getElementById("loadButton")
+        .addEventListener("click", loadDigest);
+
+      // Handle Enter key
+      document
+        .getElementById("digestInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            loadDigest();
+          }
         });
 
       function displayHexDump(buffer) {
