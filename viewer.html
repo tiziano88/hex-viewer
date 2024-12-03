@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <style>
+      div {
+        border: 1px solid rgb(88, 63, 63);
+        
+        background-color: lightblue;
+      }
+      </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hex Viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,7 +49,7 @@
         <div class="flex text-gray-500 mb-2">
           <div class="w-20">Offset</div>
           <div class="flex-1">Hexadecimal</div>
-          <div class="w-32">ASCII</div>
+          <div class="w-60">ASCII</div>
         </div>
         <div id="hexContent" class="text-gray-700"></div>
       </div>
@@ -101,7 +107,7 @@
 
           // ASCII representation
           const asciiValues = document.createElement("div");
-          asciiValues.className = "w-72";
+          asciiValues.className = "w-60";
 
           let hexString = "";
           let asciiString = "";
