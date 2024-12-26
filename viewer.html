@@ -30,9 +30,7 @@
           type="text"
           id="digestInput"
           placeholder="Enter sha3-512 digest (or sha3-256 )..."
-          
-          //fe0669cb0259d9f435a1995b94f42c313bd11dab48671ecf014e2dd2241d59a95a0b0d5e1464480d7260cbb2cf64ee4508"
-          value="sha3-256:3b5f82e1b26316afae55f6f93ab63ad4ec37d4b99d3454b3b457903f652f6a35"
+                    value="sha3-256:3b5f82e1b26316afae55f6f93ab63ad4ec37d4b99d3454b3b457903f652f6a35"
           class="flex-1 px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <button
@@ -67,7 +65,8 @@
             digest,
             "https://static.space"
           );
-          const data = await objectDetails.blob;
+          const downloadedObject = await objectDetails.downloadedObject;
+          const data = await downloadedObject.blob;
           displayHexDump(await data.arrayBuffer());
         } catch (error) {
           console.error("Error fetching digest:", error);
