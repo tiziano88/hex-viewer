@@ -56,6 +56,14 @@
     </div>
 
     <script>
+      function loadDigestFromHash() {
+        const hash = window.location.hash.slice(1);
+        if (hash) {
+          document.getElementById("digestInput").value = hash;
+          loadDigest();
+        }
+      }
+
       async function loadDigest() {
         const digest = document.getElementById("digestInput").value;
         if (!digest) return;
@@ -72,6 +80,8 @@
           console.error("Error fetching digest:", error);
         }
       }
+
+      window.addEventListener('load', loadDigestFromHash);
 
       // Handle button click
       document
